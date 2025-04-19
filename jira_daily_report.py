@@ -16,7 +16,7 @@ WEBHOOK_URL = os.environ["GOOGLE_CHAT_URL"]
 
 # Các JQL filter
 filters = {
-    "🔥 Bug impact lớn": 'project = KR2 AND status = Done AND issuetype = "Release plan"'
+    "🔥 Task đã làm": 'project = PQAP AND type = Task AND status = Done'
 }
 
 # Lấy số lượng issue từ từng filter

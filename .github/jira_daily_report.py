@@ -48,3 +48,6 @@ def send_to_google_chat(message):
 if __name__ == "__main__":
     msg = build_message()
     send_to_google_chat(msg)
+    git add .github/workflows/daily_report.yml
+git commit -m "Fix script path in workflow"
+git push origin main

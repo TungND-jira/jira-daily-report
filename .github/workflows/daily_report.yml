@@ -27,4 +27,4 @@ jobs:
           JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
           GOOGLE_CHAT_URL: ${{ secrets.GOOGLE_CHAT_URL }}
-        run: python jira_daily_report.py
+        run: python .github/jira_daily_report.py

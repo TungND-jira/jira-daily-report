@@ -26,10 +26,10 @@ def get_issue_count(jql):
     params = {"jql": jql, "maxResults": 0}
     response = requests.get(url, headers=HEADERS, params=params)
     data = response.json()
-print("DEBUG Jira Response:", data)
-if "total" not in data:
-    raise Exception("Jira API response không chứa key 'total'. Vui lòng kiểm tra lại JQL hoặc quyền truy cập.")
-return data["total"]
+    print("DEBUG Jira Response:", data)
+    if "total" not in data:
+        raise Exception("Jira API response không chứa key 'total'. Vui lòng kiểm tra lại JQL hoặc quyền truy cập.")
+    return data["total"]
 
 # Tạo nội dung báo cáo
 def build_message():

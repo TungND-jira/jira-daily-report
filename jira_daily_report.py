@@ -1,4 +1,5 @@
 import requests
+import os
 from requests.auth import HTTPBasicAuth
 from datetime import datetime
 

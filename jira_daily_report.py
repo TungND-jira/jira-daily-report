@@ -1,21 +1,11 @@
 import requests
-import os
 from requests.auth import HTTPBasicAuth
 from datetime import datetime
-
-JIRA_DOMAIN = os.environ["JIRA_DOMAIN"]
-API_TOKEN = os.environ["JIRA_API_TOKEN"]
-EMAIL = os.environ["JIRA_EMAIL"]
-WEBHOOK_URL = os.environ["GOOGLE_CHAT_URL"]
-HEADERS = {
-    "Authorization": f"Basic {requests.auth._basic_auth_str(EMAIL, API_TOKEN)}",
-    "Accept": "application/json"
-}
-
-filters = {
-    "🔥 Task đã làm": "project = KR2 AND type = Task AND status = Done AND created >= 2025-01-01 AND created <= 2026-01-01"
-}
-
+JIRA_DOMAIN = ""
+EMAIL       = ""
+API_TOKEN   = ""
+WEBHOOK_URL = ""
+auth = HTTPBasicAuth(EMAIL, API_TOKEN)
 def fetch_issues(jql, max_results=50):
     issues = []
     start_at = 0
@@ -54,17 +44,11 @@ def build_message(filters):
     return "\n".join(lines)
 def send_to_google_chat(message):
     requests.post(WEBHOOK_URL, json={"text": message}, timeout=5)
-
-# Gửi lên Google Chat
-def send_to_google_chat(message):
-    payload = {"text": message}
-    response = requests.post(WEBHOOK_URL, json=payload)
-    if response.status_code == 200:
-        print("✅ Gửi thành công!")
-    else:
-        print(f"❌ Lỗi gửi: {response.text}")
-
-# Run
-if __name__ == "__main__":
-    msg = build_message()
-    send_to_google_chat(msg)
+if name == "main":
+    # Định nghĩa các filter JQL của bạn
+    filters = {
+        "🔥 Task đã làm": "created >= 2025-01-01 AND created <= 2026-01-01 order by created DESC",
+        # …thêm filter khác nếu cần
+    }
+    report = build_message(filters)
+    send_to_google_chat(report)

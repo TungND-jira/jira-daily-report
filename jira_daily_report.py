@@ -1,43 +1,58 @@
-import os
 import requests
+from requests.auth import HTTPBasicAuth
 from datetime import datetime
 
-# Config
 JIRA_DOMAIN = os.environ["JIRA_DOMAIN"]
 API_TOKEN = os.environ["JIRA_API_TOKEN"]
 EMAIL = os.environ["JIRA_EMAIL"]
+WEBHOOK_URL = os.environ["GOOGLE_CHAT_URL"]
 HEADERS = {
     "Authorization": f"Basic {requests.auth._basic_auth_str(EMAIL, API_TOKEN)}",
     "Accept": "application/json"
 }
 
-# Webhook Google Chat
-WEBHOOK_URL = os.environ["GOOGLE_CHAT_URL"]
-
-# Các JQL filter
 filters = {
-    "🔥 Task đã làm": 'project = PQAP AND type = Task AND status = Done'
+    "🔥 Task đã làm": "project = KR2 AND type = Task AND status = Done AND created >= 2025-01-01 AND created <= 2026-01-01"
 }
 
-# Lấy số lượng issue từ từng filter
-def get_issue_count(jql):
-    url = f"{JIRA_DOMAIN}/rest/api/3/search"
-    params = {"jql": jql, "maxResults": 0}
-    response = requests.get(url, headers=HEADERS, params=params)
-    data = response.json()
-    print("DEBUG Jira Response:", data)
-    if "total" not in data:
-        raise Exception("Jira API response không chứa key 'total'. Vui lòng kiểm tra lại JQL hoặc quyền truy cập.")
-    return data["total"]
+def fetch_issues(jql, max_results=50):
+    issues = []
+    start_at = 0
+    while True:
+        params = {
+            "jql":       jql,
+            "startAt":   start_at,
+            "maxResults": max_results,
+            "fields":    "key,summary"
+        }
+        resp = requests.get(
+            f"{JIRA_DOMAIN}/rest/api/3/search",
+            auth=auth,
+            params=params,
+            timeout=10
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        batch = data.get("issues", [])
+        issues.extend(batch)
 
-# Tạo nội dung báo cáo
-def build_message():
+        if start_at + max_results >= data.get("total", 0):
+            break
+        start_at += max_results
+    return issues
+def build_message(filters):
     today = datetime.now().strftime("%d/%m/%Y")
-    message = f"📋 *Daily Report {today}*\n"
+    lines = [f"📋 *Daily Report {today}*"]
     for title, jql in filters.items():
-        count = get_issue_count(jql)
-        message += f"{title}:  {count}\n"
-    return message.strip()
+        issues = fetch_issues(jql)
+        lines.append(f"\n*{title}* — {len(issues)} tickets")
+        for issue in issues:
+            key     = issue["key"]
+            summary = issue["fields"]["summary"]
+            lines.append(f"- {key}: {summary}")
+    return "\n".join(lines)
+def send_to_google_chat(message):
+    requests.post(WEBHOOK_URL, json={"text": message}, timeout=5)
 
 # Gửi lên Google Chat
 def send_to_google_chat(message):

@@ -47,7 +47,7 @@ def send_to_google_chat(message):
 if name == "main":
     # Định nghĩa các filter JQL của bạn
     filters = {
-        "🔥 Task đã làm": "created >= 2025-01-01 AND created <= 2026-01-01 AND AND project = RETSD AND type = "Production Bug" AND status = Invalid order by created DESC",
+        "🔥 Task đã làm": "created >= 2025-01-01 AND created <= 2026-01-01 AND project = RETSD AND type = "Production Bug" AND status = Invalid order by created DESC"
             }
     report = build_message(filters)
     send_to_google_chat(report)

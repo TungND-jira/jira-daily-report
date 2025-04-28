@@ -1,10 +1,10 @@
 import requests
 from requests.auth import HTTPBasicAuth
 from datetime import datetime
-JIRA_DOMAIN = ""
-EMAIL       = ""
-API_TOKEN   = ""
-WEBHOOK_URL = ""
+JIRA_DOMAIN = "https://citigo.atlassian.net/"
+EMAIL       = "tung.nd3@kiotviet.com"
+API_TOKEN   = "ATCTT3xFfGN06GgDs6LSw6EtXexRJQ2N9UeoEY1wCb4ut1AiKRQsepHOt8uTvDRfrNcuFU1yiaitPZqrCtafNhfIyKDTfEHlNdYwqYSdTAe22KqCtxmnfqoR_br_64WXxW92R3rhpV8zTkLb76J-F_eUBVYOdpITC4fEtnet3QDNLoo2YugLZvA=6C2C39BF"
+WEBHOOK_URL = "https://chat.googleapis.com/v1/spaces/AAAAarIyAmo/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=ireMcrrfGXzUaJ6PKCAU2BDAZdT9w0c-oC_aTLjlgAw"
 auth = HTTPBasicAuth(EMAIL, API_TOKEN)
 def fetch_issues(jql, max_results=50):
     issues = []
@@ -47,8 +47,7 @@ def send_to_google_chat(message):
 if name == "main":
     # Định nghĩa các filter JQL của bạn
     filters = {
-        "🔥 Task đã làm": "created >= 2025-01-01 AND created <= 2026-01-01 order by created DESC",
-        # …thêm filter khác nếu cần
-    }
+        "🔥 Task đã làm": "created >= 2025-01-01 AND created <= 2026-01-01 AND AND project = RETSD AND type = "Production Bug" AND status = Invalid order by created DESC",
+            }
     report = build_message(filters)
     send_to_google_chat(report)
